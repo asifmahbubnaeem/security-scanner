@@ -1,0 +1,52 @@
+# Security Scanner config (optional)
+# Paths are relative to this file or cwd.
+
+api_key_env: GOOGLE_API_KEY
+model: gemini-2.5-flash
+
+# Directory scan: include/exclude globs (default excludes: venv, __pycache__, .git)
+# Match files in the current directory and in subdirectories.
+include:
+  - "*.py"
+  - "*.js"
+  - "*.jsx"
+  - "*.ts"
+  - "*.tsx"
+  - "*.java"
+  - "**/*.py"
+  - "**/*.js"
+  - "**/*.jsx"
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.java"
+exclude:
+  - "scanner.py"
+  - "rules.py"
+  - "reports.py"    # if you don’t want to scan this demo file
+  - "**/venv/**"
+  - "**/__pycache__/**"
+  - "**/.git/**"
+  - "**/node_modules/**"
+
+# Exit code 1 if any finding has one of these severities
+fail_on: [critical, high]
+
+enable_cache: true
+cache_file: .scanner-cache.json
+rate_limit_rps: 2.0
+
+# Optional: custom regex rules (run locally, no API)
+rules:
+  - id: hardcoded-secret
+    name: Hardcoded secret
+    # Match assignments like DB_PASSWORD = "..." or API_SECRET = "..."
+    pattern: '^\s*(DB_PASSWORD|API_SECRET)\s*=\s*["''][^"'']+["'']'
+    severity: high
+    message: Hardcoded credential detected
+    fix: Use environment variables or a secrets manager
+    replacement: '\1 = "<redacted>"'
+#   - id: eval-usage
+#     name: Use of eval()
+#     pattern: '\beval\s*\('
+#     severity: critical
+#     message: eval() can execute arbitrary code

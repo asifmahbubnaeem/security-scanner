@@ -1,0 +1,11 @@
+# Install: pip install pre-commit && pre-commit install
+# Run on staged files: pre-commit run
+repos:
+  - repo: local
+    hooks:
+      - id: security-scanner
+        name: security scanner
+        entry: python scripts/pre-commit-scan.py
+        language: system
+        types: [python]
+        pass_filenames: true
