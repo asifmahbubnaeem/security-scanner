@@ -99,7 +99,3 @@ pre-commit install
 ```
 
 **GitHub Actions:** Add `GOOGLE_API_KEY` to repo secrets. The workflow in `.github/workflows/security-scan.yml` runs on push/PR, uploads `report.json` as an artifact, and fails the job if there are high/critical findings (or new ones when using a baseline).
-
-## Roadmap
-
-See [plan.md](plan.md) for the full roadmap (auto-fix, rate limiting, caching, etc.).
