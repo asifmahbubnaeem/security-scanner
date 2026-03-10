@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "scanner_version": "0.1.0",
-  "timestamp": "2026-03-10T18:50:54Z",
+  "timestamp": "2026-03-10T19:21:50Z",
   "root": "/home/lenovo/Desktop/Repos/security-scanner",
   "summary": {
     "critical": 14,
@@ -17,7 +17,8 @@
       "type": "Hardcoded Cryptographic Key",
       "description": "The cryptographic key is hardcoded directly into the source code, making it easily discoverable by attackers.",
       "impact": "An attacker who gains access to the source code or compiled binary can easily extract the key, compromising all data encrypted with it.",
-      "fix": null
+      "fix": null,
+      "new": false
     },
     {
       "file": "/home/lenovo/Desktop/Repos/security-scanner/InsecureCrypto.java",
@@ -26,7 +27,8 @@
       "type": "Insecure Cryptographic Mode",
       "description": "The code uses Electronic Codebook (ECB) mode for AES encryption, which is insecure as it encrypts identical blocks of plaintext into identical blocks of ciphertext, revealing patterns.",
       "impact": "Attackers can analyze patterns in encrypted data to infer information about the plaintext, potentially leading to partial decryption or manipulation.",
-      "fix": "// Use a secure mode like AES/GCM/NoPadding (recommended) or AES/CBC/PKCS5Padding.\n// For GCM or CBC, a cryptographically secure, unique Initialization Vector (IV) must be\n// generated for each encryption and securely transmitted or stored with the ciphertext.\n// Example for AES/CBC/PKCS5Padding:\n// import javax.crypto.spec.IvParameterSpec;\n// import java.security.SecureRandom;\n// ...\n// byte[] iv = new byte[16]; // AES block size\n// new SecureRandom().nextBytes(iv);\n// IvParameterSpec ivSpec = new IvParameterSpec(iv);\n// Cipher cipher = Cipher.getInstance(\"AES/CBC/PKCS5Padding\");\n// cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);\n// byte[] enc = cipher.doFinal(plaintext.getBytes(java.nio.charset.StandardCharsets.UTF_8));\n// // You must combine the IV and the encrypted bytes (e.g., concatenate them) before Base64 encoding."
+      "fix": "// Use a secure mode like AES/GCM/NoPadding (recommended) or AES/CBC/PKCS5Padding.\n// For GCM or CBC, a cryptographically secure, unique Initialization Vector (IV) must be\n// generated for each encryption and securely transmitted or stored with the ciphertext.\n// Example for AES/CBC/PKCS5Padding:\n// import javax.crypto.spec.IvParameterSpec;\n// import java.security.SecureRandom;\n// ...\n// byte[] iv = new byte[16]; // AES block size\n// new SecureRandom().nextBytes(iv);\n// IvParameterSpec ivSpec = new IvParameterSpec(iv);\n// Cipher cipher = Cipher.getInstance(\"AES/CBC/PKCS5Padding\");\n// cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);\n// byte[] enc = cipher.doFinal(plaintext.getBytes(java.nio.charset.StandardCharsets.UTF_8));\n// // You must combine the IV and the encrypted bytes (e.g., concatenate them) before Base64 encoding.",
+      "new": false
     },
     {
       "file": "/home/lenovo/Desktop/Repos/security-scanner/InsecureCrypto.java",
@@ -35,7 +37,8 @@
       "type": "Charset Mismatch",
       "description": "The code converts the plaintext string to bytes without specifying a character encoding, which can lead to platform-dependent behavior or data corruption.",
       "impact": "Data integrity issues, potential for incorrect encryption/decryption, or interoperability problems between systems using different default encodings.",
-      "fix": "plaintext.getBytes(java.nio.charset.StandardCharsets.UTF_8)"
+      "fix": "plaintext.getBytes(java.nio.charset.StandardCharsets.UTF_8)",
+      "new": false
     },
     {
       "file": "VulnerableJava.java",
@@ -44,7 +47,8 @@
       "type": "Hardcoded Credentials",
       "description": "Database username and password are hardcoded directly in the source code.",
       "impact": "An attacker gaining access to the source code or compiled application can retrieve sensitive database credentials.",
-      "fix": "Store credentials securely, for example, in environment variables, a secure configuration file, or a secrets management system, and retrieve them at runtime."
+      "fix": "Store credentials securely, for example, in environment variables, a secure configuration file, or a secrets management system, and retrieve them at runtime.",
+      "new": false
     },
     {
       "file": "VulnerableJava.java",
@@ -53,7 +57,8 @@
       "type": "SQL Injection",
       "description": "User-supplied input is directly concatenated into a SQL query without proper sanitization or parameterization.",
       "impact": "An attacker can manipulate the query to gain unauthorized access to data, modify data, or execute arbitrary database commands.",
-      "fix": "String sql = \"SELECT * FROM users WHERE username = ?\";\ntry (PreparedStatement pstmt = conn.prepareStatement(sql)) {\n    pstmt.setString(1, user);\n    ResultSet rs = pstmt.executeQuery();\n    // ... process results\n}"
+      "fix": "String sql = \"SELECT * FROM users WHERE username = ?\";\ntry (PreparedStatement pstmt = conn.prepareStatement(sql)) {\n    pstmt.setString(1, user);\n    ResultSet rs = pstmt.executeQuery();\n    // ... process results\n}",
+      "new": false
     },
     {
       "file": "VulnerableJava.java",
@@ -62,7 +67,8 @@
       "type": "Reflected XSS",
       "description": "User-supplied input ('user') is directly included in the HTTP response without proper output encoding.",
       "impact": "An attacker can inject malicious client-side scripts into the webpage, potentially stealing session cookies, defacing the site, or redirecting users.",
-      "fix": "// Use a robust HTML encoding library like OWASP ESAPI or Apache Commons Text to escape user input before rendering.\n// Example using a hypothetical encoder:\n// response.getWriter().println(\"<p>User: \" + HtmlEncoder.encodeForHTML(user) + \"</p>\");"
+      "fix": "// Use a robust HTML encoding library like OWASP ESAPI or Apache Commons Text to escape user input before rendering.\n// Example using a hypothetical encoder:\n// response.getWriter().println(\"<p>User: \" + HtmlEncoder.encodeForHTML(user) + \"</p>\");",
+      "new": false
     },
     {
       "file": "VulnerableJava.java",
@@ -71,7 +77,8 @@
       "type": "Command Injection",
       "description": "User-supplied input ('cmd') is directly concatenated into a command executed by Runtime.getRuntime().exec().",
       "impact": "An attacker can execute arbitrary operating system commands on the server, potentially leading to remote code execution, data exfiltration, or system compromise.",
-      "fix": "if (cmd != null) {\n    // Validate 'cmd' against a strict whitelist of allowed inputs or patterns.\n    // Pass user input as separate arguments to ProcessBuilder to avoid shell interpretation.\n    Process p = new ProcessBuilder(\"ls\", cmd).start();\n    BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));\n    String line;\n    while ((line = br.readLine()) != null) {\n        System.out.println(line);\n    }\n}"
+      "fix": "if (cmd != null) {\n    // Validate 'cmd' against a strict whitelist of allowed inputs or patterns.\n    // Pass user input as separate arguments to ProcessBuilder to avoid shell interpretation.\n    Process p = new ProcessBuilder(\"ls\", cmd).start();\n    BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));\n    String line;\n    while ((line = br.readLine()) != null) {\n        System.out.println(line);\n    }\n}",
+      "new": false
     },
     {
       "file": "vulnerable-express.js",
@@ -80,7 +87,8 @@
       "type": "Hardcoded Credential",
       "description": "The JWT secret is hardcoded directly in the source code, making it easily discoverable and compromised if the code is exposed.",
       "impact": "An attacker can forge valid JWTs, impersonate users, or gain unauthorized access to protected resources.",
-      "fix": "const SECRET = process.env.JWT_SECRET || \"a-strong-fallback-secret-for-development-only\"; // Use environment variables for secrets in production"
+      "fix": "const SECRET = process.env.JWT_SECRET || \"a-strong-fallback-secret-for-development-only\"; // Use environment variables for secrets in production",
+      "new": false
     },
     {
       "file": "vulnerable-express.js",
@@ -89,7 +97,8 @@
       "type": "Authentication Bypass",
       "description": "The login endpoint issues a JWT token based solely on the username and an 'admin' flag directly from the request body, without any password or credential verification.",
       "impact": "Any user can log in as any username and arbitrarily grant themselves administrative privileges by manipulating the request body.",
-      "fix": "app.post(\"/login\", async (req, res) => {\n  const { username, password } = req.body;\n\n  // TODO: Implement proper user authentication here, e.g., fetching user from a secure database,\n  // securely hashing and comparing passwords (e.g., using bcrypt), and only setting user roles\n  // based on database information, not client input.\n  // For example:\n  // const user = await User.findOne({ username });\n  // if (!user || !await bcrypt.compare(password, user.hashedPassword)) {\n  //   return res.status(401).json({ message: \"Invalid credentials\" });\n  // }\n\n  // Assuming successful authentication and fetching user roles:\n  const isAdmin = false; // This should come from verified user data, not req.body.admin\n  const token = jwt.sign({ username, admin: isAdmin }, SECRET, {\n    expiresIn: \"7d\",\n  });\n\n  res.json({ token });\n});"
+      "fix": "app.post(\"/login\", async (req, res) => {\n  const { username, password } = req.body;\n\n  // TODO: Implement proper user authentication here, e.g., fetching user from a secure database,\n  // securely hashing and comparing passwords (e.g., using bcrypt), and only setting user roles\n  // based on database information, not client input.\n  // For example:\n  // const user = await User.findOne({ username });\n  // if (!user || !await bcrypt.compare(password, user.hashedPassword)) {\n  //   return res.status(401).json({ message: \"Invalid credentials\" });\n  // }\n\n  // Assuming successful authentication and fetching user roles:\n  const isAdmin = false; // This should come from verified user data, not req.body.admin\n  const token = jwt.sign({ username, admin: isAdmin }, SECRET, {\n    expiresIn: \"7d\",\n  });\n\n  res.json({ token });\n});",
+      "new": false
     },
     {
       "file": "vulnerable-express.js",
@@ -98,7 +107,8 @@
       "type": "Improper Error Handling",
       "description": "The `jwt.verify` call is not wrapped in a try-catch block, leading to application crashes if an invalid, expired, or malformed token is provided.",
       "impact": "An attacker can crash the server by sending invalid tokens, resulting in a denial of service, and potentially leak internal server error details.",
-      "fix": "app.get(\"/admin\", (req, res) => {\n  const token = req.query.token;\n\n  if (!token) {\n    return res.status(401).send(\"Authentication token required.\");\n  }\n\n  try {\n    const decoded = jwt.verify(token, SECRET);\n\n    if (decoded.admin) {\n      res.send(\"Welcome admin\");\n    } else {\n      res.status(403).send(\"Forbidden: Not an admin\");\n    }\n  } catch (err) {\n    if (err.name === 'TokenExpiredError') {\n      return res.status(401).send(\"Unauthorized: Token expired.\");\n    }\n    if (err.name === 'JsonWebTokenError') {\n      return res.status(401).send(\"Unauthorized: Invalid token.\");\n    }\n    // Catch any other unexpected errors during verification\n    return res.status(500).send(\"Internal server error during token verification.\");\n  }\n});"
+      "fix": "app.get(\"/admin\", (req, res) => {\n  const token = req.query.token;\n\n  if (!token) {\n    return res.status(401).send(\"Authentication token required.\");\n  }\n\n  try {\n    const decoded = jwt.verify(token, SECRET);\n\n    if (decoded.admin) {\n      res.send(\"Welcome admin\");\n    } else {\n      res.status(403).send(\"Forbidden: Not an admin\");\n    }\n  } catch (err) {\n    if (err.name === 'TokenExpiredError') {\n      return res.status(401).send(\"Unauthorized: Token expired.\");\n    }\n    if (err.name === 'JsonWebTokenError') {\n      return res.status(401).send(\"Unauthorized: Invalid token.\");\n    }\n    // Catch any other unexpected errors during verification\n    return res.status(500).send(\"Internal server error during token verification.\");\n  }\n});",
+      "new": false
     },
     {
       "file": "vulnerable-js.js",
@@ -107,7 +117,8 @@
       "type": "Hardcoded Secret",
       "description": "A sensitive database password ('SuperSecretPassword123!') is directly embedded in the source code.",
       "impact": "If the code repository or compiled application is exposed, an attacker could gain unauthorized access to the database using the hardcoded credentials.",
-      "fix": "const DB_PASSWORD = process.env.DB_PASSWORD; // Load from environment variables or a secure configuration management system."
+      "fix": "const DB_PASSWORD = process.env.DB_PASSWORD; // Load from environment variables or a secure configuration management system.",
+      "new": false
     },
     {
       "file": "vulnerable-js.js",
@@ -116,7 +127,8 @@
       "type": "SQL Injection",
       "description": "User-controlled input `q` from the URL query is directly concatenated into a SQL query without proper sanitization or parameterization.",
       "impact": "An attacker can manipulate the query to gain unauthorized access to, modify, or delete sensitive data in the database, potentially leading to full data compromise or denial of service.",
-      "fix": "const sql = \"SELECT * FROM users WHERE username = ?\";\nconnection.query(sql, [q], (err, rows) => { /* ... */ });"
+      "fix": "const sql = \"SELECT * FROM users WHERE username = ?\";\nconnection.query(sql, [q], (err, rows) => { /* ... */ });",
+      "new": false
     },
     {
       "file": "vulnerable-js.js",
@@ -125,7 +137,8 @@
       "type": "Reflected Cross-Site Scripting (XSS)",
       "description": "User-controlled input `q` is directly inserted into the HTML response without proper HTML escaping.",
       "impact": "An attacker can inject malicious client-side scripts that execute in the victim's browser, potentially leading to session hijacking, data theft, defacement, or redirection to malicious sites.",
-      "fix": "function escapeHtml(text) {\n  const map = {\n    \"&\": \"&amp;\",\n    \"<\": \"&lt;\",\n    \">\": \"&gt;\",\n    \"\\\"\": \"&quot;\",\n    \"'\": \"&#039;\"\n  };\n  return text.replace(/[&<>\"]|'(?=[^>]*<)/g, function(m) { return map[m]; });\n}\nres.end(\"<h1>Hello \" + escapeHtml(q) + \"</h1>\");"
+      "fix": "function escapeHtml(text) {\n  const map = {\n    \"&\": \"&amp;\",\n    \"<\": \"&lt;\",\n    \">\": \"&gt;\",\n    \"\\\"\": \"&quot;\",\n    \"'\": \"&#039;\"\n  };\n  return text.replace(/[&<>\"]|'(?=[^>]*<)/g, function(m) { return map[m]; });\n}\nres.end(\"<h1>Hello \" + escapeHtml(q) + \"</h1>\");",
+      "new": false
     },
     {
       "file": "vulnerable-js.js",
@@ -134,7 +147,8 @@
       "type": "Command Injection",
       "description": "User-controlled input `cmd` from the URL query is directly concatenated into a system command executed by `childProcess.exec`.",
       "impact": "An attacker can execute arbitrary operating system commands on the server, leading to full server compromise, data exfiltration, or denial of service.",
-      "fix": "childProcess.execFile(\"ls\", [cmd], (err, stdout, stderr) => { /* ... */ }); // Use execFile with an array of arguments, or strictly validate input."
+      "fix": "childProcess.execFile(\"ls\", [cmd], (err, stdout, stderr) => { /* ... */ }); // Use execFile with an array of arguments, or strictly validate input.",
+      "new": false
     },
     {
       "file": "vulnerable-js.js",
@@ -143,7 +157,8 @@
       "type": "Remote Code Execution (RCE) via eval",
       "description": "The `eval` function executes arbitrary JavaScript code provided directly by the user via the `code` query parameter.",
       "impact": "An attacker can execute any JavaScript code on the server with the privileges of the application, leading to full server compromise, data manipulation, or denial of service.",
-      "fix": "null"
+      "fix": "null",
+      "new": false
     },
     {
       "file": "vulnerable.py",
@@ -152,7 +167,8 @@
       "type": "Hardcoded Credentials",
       "description": "Sensitive credentials (database password and API secret) are hardcoded directly into the source code.",
       "impact": "If the code repository or compiled application is accessed, these secrets will be exposed, leading to unauthorized access to connected systems.",
-      "fix": "import os\nDB_PASSWORD = os.getenv('DB_PASSWORD')\nAPI_SECRET = os.getenv('API_SECRET') # Store credentials in environment variables or a secure secrets management service."
+      "fix": "import os\nDB_PASSWORD = os.getenv('DB_PASSWORD')\nAPI_SECRET = os.getenv('API_SECRET') # Store credentials in environment variables or a secure secrets management service.",
+      "new": false
     },
     {
       "file": "vulnerable.py",
@@ -161,7 +177,8 @@
       "type": "SQL Injection",
       "description": "User-supplied `username` and `password` are directly concatenated into the SQL query string without proper sanitization or parameterization.",
       "impact": "An attacker can manipulate the input to execute arbitrary SQL commands, bypass authentication, or extract sensitive data from the database.",
-      "fix": "def authenticate(username, password):\n    conn = sqlite3.connect('users.db')\n    cursor = conn.cursor()\n    cursor.execute(\"SELECT * FROM users WHERE username = ? AND password = ?\", (username, password))\n    return cursor.fetchone()"
+      "fix": "def authenticate(username, password):\n    conn = sqlite3.connect('users.db')\n    cursor = conn.cursor()\n    cursor.execute(\"SELECT * FROM users WHERE username = ? AND password = ?\", (username, password))\n    return cursor.fetchone()",
+      "new": false
     },
     {
       "file": "vulnerable.py",
@@ -170,7 +187,8 @@
       "type": "Weak Hashing Algorithm",
       "description": "The MD5 algorithm is cryptographically broken and unsuitable for password hashing due to its speed and susceptibility to collision and rainbow table attacks.",
       "impact": "Stored passwords hashed with MD5 can be easily cracked, even if a salt is used, allowing attackers to gain access to user accounts.",
-      "fix": "import bcrypt\n\ndef hash_password(password):\n    # Generate a salt and hash the password using bcrypt\n    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())\n    return hashed_password.decode('utf-8') # Store as string"
+      "fix": "import bcrypt\n\ndef hash_password(password):\n    # Generate a salt and hash the password using bcrypt\n    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())\n    return hashed_password.decode('utf-8') # Store as string",
+      "new": false
     },
     {
       "file": "vulnerable.py",
@@ -179,7 +197,8 @@
       "type": "Command Injection",
       "description": "The user-supplied `user_input` is directly embedded into a shell command executed via `os.system()`.",
       "impact": "An attacker can inject arbitrary shell commands by crafting the `user_input`, leading to remote code execution, data exfiltration, or system compromise.",
-      "fix": "def process_input(user_input):\n    # If the intention is merely to print the input, use Python's print function.\n    print(user_input)\n    # If an external command *must* be executed, use subprocess.run with shell=False and pass arguments as a list."
+      "fix": "def process_input(user_input):\n    # If the intention is merely to print the input, use Python's print function.\n    print(user_input)\n    # If an external command *must* be executed, use subprocess.run with shell=False and pass arguments as a list.",
+      "new": false
     },
     {
       "file": "/home/lenovo/Desktop/Repos/security-scanner/vulnerable.ts",
@@ -188,7 +207,8 @@
       "type": "Hardcoded Credentials",
       "description": "Sensitive credentials (DB_PASSWORD, API_SECRET) are hardcoded directly in the source code.",
       "impact": "If the code repository or compiled application is exposed, these credentials can be compromised, leading to unauthorized access to databases or APIs.",
-      "fix": "Use environment variables, a secure secrets management service, or a configuration file that is not committed to version control.\n```typescript\n// Example using environment variables\nconst DB_PASSWORD = process.env.DB_PASSWORD;\nconst API_SECRET = process.env.API_SECRET;\n```"
+      "fix": "Use environment variables, a secure secrets management service, or a configuration file that is not committed to version control.\n```typescript\n// Example using environment variables\nconst DB_PASSWORD = process.env.DB_PASSWORD;\nconst API_SECRET = process.env.API_SECRET;\n```",
+      "new": false
     },
     {
       "file": "/home/lenovo/Desktop/Repos/security-scanner/vulnerable.ts",
@@ -197,7 +217,8 @@
       "type": "SQL Injection",
       "description": "User-supplied `username` and `password` are directly concatenated into a SQL query string without proper sanitization or parameterization.",
       "impact": "An attacker can inject malicious SQL code, leading to unauthorized data access, modification, deletion, or full database compromise.",
-      "fix": "Use parameterized queries or prepared statements provided by your database driver to separate SQL logic from user data.\n```typescript\nexport function authenticate(username: string, password_plain: string) {\n  // Using a hypothetical parameterized query function\n  // In a real scenario, you'd hash the password before querying\n  const hashedPassword = hashPassword(password_plain); // Assuming hashPassword is secure\n  const query = \"SELECT * FROM users WHERE username = ? AND password = ?\";\n  // Example of how a DB driver might use parameters (e.g., mysql2, pg)\n  // return db.execute(query, [username, hashedPassword]); \n  return { query, params: [username, hashedPassword] }; // Placeholder return\n}\n```"
+      "fix": "Use parameterized queries or prepared statements provided by your database driver to separate SQL logic from user data.\n```typescript\nexport function authenticate(username: string, password_plain: string) {\n  // Using a hypothetical parameterized query function\n  // In a real scenario, you'd hash the password before querying\n  const hashedPassword = hashPassword(password_plain); // Assuming hashPassword is secure\n  const query = \"SELECT * FROM users WHERE username = ? AND password = ?\";\n  // Example of how a DB driver might use parameters (e.g., mysql2, pg)\n  // return db.execute(query, [username, hashedPassword]); \n  return { query, params: [username, hashedPassword] }; // Placeholder return\n}\n```",
+      "new": false
     },
     {
       "file": "/home/lenovo/Desktop/Repos/security-scanner/vulnerable.ts",
@@ -206,7 +227,8 @@
       "type": "Weak Hashing Algorithm",
       "description": "The MD5 algorithm is cryptographically weak and unsuitable for hashing passwords, making them vulnerable to cracking.",
       "impact": "MD5 is fast and susceptible to collision and rainbow table attacks, allowing attackers to easily crack hashed passwords and compromise user accounts.",
-      "fix": "Use strong, slow, and salt-aware password hashing algorithms like bcrypt, scrypt, or Argon2.\n```typescript\nconst bcrypt = require('bcryptjs'); // Or import for TypeScript\n\nexport async function hashPassword(password: string): Promise<string> {\n  const saltRounds = 10;\n  return await bcrypt.hash(password, saltRounds);\n}\n\n// For authentication, you'd then compare:\n// await bcrypt.compare(plainPassword, hashedPasswordFromDb);\n```"
+      "fix": "Use strong, slow, and salt-aware password hashing algorithms like bcrypt, scrypt, or Argon2.\n```typescript\nconst bcrypt = require('bcryptjs'); // Or import for TypeScript\n\nexport async function hashPassword(password: string): Promise<string> {\n  const saltRounds = 10;\n  return await bcrypt.hash(password, saltRounds);\n}\n\n// For authentication, you'd then compare:\n// await bcrypt.compare(plainPassword, hashedPasswordFromDb);\n```",
+      "new": false
     },
     {
       "file": "/home/lenovo/Desktop/Repos/security-scanner/vulnerable.ts",
@@ -215,7 +237,8 @@
       "type": "Command Injection",
       "description": "User-supplied `userInput` is directly embedded into a shell command executed via `execSync`, allowing arbitrary command execution.",
       "impact": "An attacker can inject malicious shell commands, leading to full system compromise, data exfiltration, or denial of service.",
-      "fix": "Avoid executing shell commands with user input if possible. If necessary, use `child_process.spawn` with an array of arguments or strictly sanitize and validate input, escaping special shell characters. For simple echo, `console.log` is sufficient.\n```typescript\n// If the intent is just to print to console:\nexport function processInput(userInput: string) {\n  console.log(userInput);\n}\n\n// If a command must be run with arguments:\n// const { spawn } = require(\"child_process\");\n// export function processInput(userInput: string) {\n//   spawn('echo', [userInput], { stdio: 'inherit' });\n// }\n\n// Or if you absolutely must use execSync for a single command, escape the argument:\n// const { execSync } = require(\"child_process\");\n// const shellEscape = require('shell-escape'); // You'd need a library for robust escaping\n// export function processInput(userInput: string) {\n//   const escapedInput = shellEscape([userInput]); // Escapes for shell interpretation\n//   execSync(`echo ${escapedInput}`);\n// }\n```"
+      "fix": "Avoid executing shell commands with user input if possible. If necessary, use `child_process.spawn` with an array of arguments or strictly sanitize and validate input, escaping special shell characters. For simple echo, `console.log` is sufficient.\n```typescript\n// If the intent is just to print to console:\nexport function processInput(userInput: string) {\n  console.log(userInput);\n}\n\n// If a command must be run with arguments:\n// const { spawn } = require(\"child_process\");\n// export function processInput(userInput: string) {\n//   spawn('echo', [userInput], { stdio: 'inherit' });\n// }\n\n// Or if you absolutely must use execSync for a single command, escape the argument:\n// const { execSync } = require(\"child_process\");\n// const shellEscape = require('shell-escape'); // You'd need a library for robust escaping\n// export function processInput(userInput: string) {\n//   const escapedInput = shellEscape([userInput]); // Escapes for shell interpretation\n//   execSync(`echo ${escapedInput}`);\n// }\n```",
+      "new": false
     }
   ]
 }
