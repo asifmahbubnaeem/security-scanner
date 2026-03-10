@@ -223,10 +223,28 @@ def scan_file(
         language = "Java"
     else:
         language = "source"
-    response = client.models.generate_content(
-        model=model,
-        contents=SECURITY_PROMPT.format(language=language, code=code),
-    )
+
+    try:
+        response = client.models.generate_content(
+            model=model,
+            contents=SECURITY_PROMPT.format(language=language, code=code),
+        )
+    except Exception as e:
+        msg = str(e)
+        if (
+            "RESOURCE_EXHAUSTED" in msg
+            or "429" in msg
+            or "quota" in msg.lower()
+        ):
+            if verbose:
+                print(
+                    f"Warning: quota exhausted while scanning {path}: {e}",
+                    file=sys.stderr,
+                )
+            # Soft-fail on quota errors: skip LLM findings for this file
+            return findings
+        raise
+
     text = getattr(response, "text", None) or ""
     raw = _parse_findings_json(text)
     findings.extend([_normalize_finding(f, str(path)) for f in raw])
@@ -334,8 +352,17 @@ def scan_directory(
 
 def _finding_signature(f: dict) -> tuple:
     """Stable signature for baseline matching (file, type, description)."""
+    raw_path = f.get("file") or ""
+    p = Path(raw_path)
+    try:
+        # Normalize to path relative to current working directory (repo root in CI/local)
+        rel = p.resolve().relative_to(Path.cwd().resolve())
+    except ValueError:
+        # If the file is outside the cwd or cannot be relativized, fall back to the original path
+        rel = p
+    normalized_path = str(rel).replace("\\", "/")
     return (
-        str(Path(f.get("file") or "").resolve()),
+        normalized_path,
         (f.get("type") or "").strip(),
         (f.get("description") or "").strip()[:200],
     )
